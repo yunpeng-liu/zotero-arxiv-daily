@@ -56,13 +56,17 @@ def get_arxiv_paper(query:str, start:datetime.datetime, end:datetime.datetime, d
     client = arxiv.Client()
     search = arxiv.Search(query=query, sort_by=arxiv.SortCriterion.SubmittedDate)
     retry_num = 5
+    last_day = None
     if not debug:
         while retry_num > 0:
             papers = []
             try:
                 for i in client.results(search):
                     published_date = i.published
-                    if published_date < end and published_date >= start:
+                    if last_day is None:
+                        last_day = published_date
+                    # if published_date < end and published_date >= start:
+                    if published_date == last_day:
                         i.arxiv_id = re.sub(r'v\d+$', '', i.get_short_id())
                         i.code_url = get_paper_code_url(i)
                         papers.append(i)

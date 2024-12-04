@@ -64,9 +64,9 @@ def get_arxiv_paper(query:str, start:datetime.datetime, end:datetime.datetime, d
                 for i in client.results(search):
                     published_date = i.published
                     if last_day is None:
-                        last_day = published_date
+                        last_day = published_date.replace(hour=0, minute=0, second=0, microsecond=0)e
                     # if published_date < end and published_date >= start:
-                    if published_date == last_day:
+                    if published_date > last_day:
                         i.arxiv_id = re.sub(r'v\d+$', '', i.get_short_id())
                         i.code_url = get_paper_code_url(i)
                         papers.append(i)
